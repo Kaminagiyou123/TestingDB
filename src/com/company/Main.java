@@ -3,34 +3,48 @@ package com.company;
 import java.sql.*;
 
 public class Main {
+    public static final String DB_NAME="testjava.db";
+    public static final String CONNECTION_STRING="jdbc:sqlite:/Users/ranyou/Documents/Java_Projects/TestingDB/"+DB_NAME;
+    public static final String TABLE_CONTACTS="contacts";
+    public static final String COLUME_NAME="name";
+    public static final String COLUME_PHONE="phone";
+    public static final String COLUME_EMAIL="email";
+
 
     public static void main(String[] args) {
-	try{ Connection conn= DriverManager.getConnection("jdbc:sqlite:/Users/ranyou/Documents/Java_Projects/TestingDB/testjava.db");
-//        conn.setAutoCommit(false);
+	try{ Connection conn= DriverManager.getConnection(CONNECTION_STRING);
 	    Statement statement=conn.createStatement();
-//	    statement.execute("CREATE Table IF NOT EXISTS contacts "+
-//                "(name TEXT,phone INTEGER,email TEXT)");
-//	    statement.execute("INSERT INTO contacts (name,phone,email)"+
-//                "VALUES('TIM',123445,'tim@gmail.com')");
-//        statement.execute("INSERT INTO contacts (name,phone,email)"+
-//                "VALUES('Joe',34567,'Joeb@gmail.com')");
-//        statement.execute("INSERT INTO contacts (name,phone,email)"+
-//                "VALUES('Jane',4327687,'jane@gmail.com')");
-//        statement.execute("INSERT INTO contacts (name,phone,email)"+
-//                "VALUES('Fido',334555,'Fido@gmail.com')");
-//        statement.execute("UPDATE contacts SET phone=009999 WHERE name='Jane'");
-        statement.execute("SELECT * from contacts");
-        ResultSet results=statement.getResultSet();
-        while (results.next()) {
-            System.out.println(results.getString("name")+results.getInt("phone")+results.getString("email"));
+	    statement.execute("DROP TABLE IF EXISTS "+ TABLE_CONTACTS);
+	    statement.execute("CREATE Table IF NOT EXISTS "+TABLE_CONTACTS+
+                "("+COLUME_NAME+" text,"+
+                    COLUME_PHONE+" integer,"+
+                    COLUME_EMAIL+" text "+
+                ")");
+	    insertContact(statement,"Joe",12345,"joe@gmail.com");
+        insertContact(statement,"Jane",333555,"jane@gmail.com");
+        insertContact(statement,"Fido",34563,"Fido@gmail.com");
 
+
+        ResultSet results=statement.executeQuery("SELECT * from "+TABLE_CONTACTS);
+        while (results.next()) {
+            System.out.println(results.getString(COLUME_NAME)
+                    +" "+results.getInt(COLUME_PHONE)
+                    +" "+results.getString(COLUME_EMAIL));
         }
         results.close();
 
 	    statement.close();
 	    conn.close();
     } catch (SQLException e) {
-        System.out.println("Something went wrong "+ e.getMessage());
+        System.out.println("Something went wrong "+ e.getMessage()
+        +e.getStackTrace());
     }
+}
+    private static void insertContact(Statement statement, String name, Integer phone, String email) throws SQLException {
+        statement.execute("INSERT INTO "+TABLE_CONTACTS+
+                "("+COLUME_NAME+","+
+                COLUME_PHONE+","+
+                COLUME_EMAIL+
+                ")"+ "VALUES('"+ name +"+',"+phone+",'"+email+"')");
     }
 }
