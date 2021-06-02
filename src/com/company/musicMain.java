@@ -6,6 +6,7 @@ import com.company.model.SongArtist;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Scanner;
 
 public class musicMain {
     public static void main(String[] args) throws SQLException {
@@ -43,7 +44,12 @@ public class musicMain {
         System.out.println("Number of songs is "+count);
         datasource.createViewForSongArtists();
 
-        songArtists= datasource.querySongInfoView("Heartless");
+        Scanner scanner=new Scanner(System.in);
+        System.out.println("Enter a song title: ");
+        String title= scanner.nextLine();
+
+
+        songArtists= datasource.querySongInfoView(title);
 
         if (songArtists.isEmpty()){
             System.out.println("Couldn't find the artist for the song");
@@ -53,7 +59,6 @@ public class musicMain {
             System.out.println(" FROM VIEW= "+a.getArtistName()
             +" "+a.getAlbumName()+ " "+a.getTrack());
         }
-
         datasource.close();
     }
 }
